@@ -1,0 +1,32 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+<head>
+  {% include "bootstrap.html" %}
+    <title></title>
+    <link rel='stylesheet' href='{% static "css/base.css" %}' />
+</head>
+<body>
+    {% include "nav_bars/log_reg_nav_bar.html" %}
+    <div class="container">
+
+      <!-- Main component for a primary marketing message or call to action -->
+      <div class="jumbotron">
+        <h1>Bulldog Circle</h1>
+        <p>Bulldog Circle is a social network just for Bellevue College students. Bulldog Circle hopes to improve the social atmosphere of Bellevue College.</p>
+        <p>JOIN!</p>
+        <p>
+          <div>
+            <a class="btn btn-lg btn-primary" href="/accounts/login" role="button">Login</a>
+            <a class="btn btn-lg btn-primary" href="/accounts/signup" role="button">Register</a>
+          </div>
+        </p>
+      </div>
+
+    </div> <!-- /container -->
+
+
+
+    {% include "bootstrap_js.html" %}
+</body>
+</html>

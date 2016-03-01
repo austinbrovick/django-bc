@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    {% include "bootstrap.html" %}
+</head>
+<body>
+    {% include "nav_bar.html" %}
+    <div id='main_wrapper'>
+        {% for form in formset %}
+          <br>{{form}}
+        {% endfor %}
+    </div>
+    {% include "bootstrap_js.html" %}
+</body>
+
+
+</html>
