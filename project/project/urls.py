@@ -26,6 +26,8 @@ urlpatterns = [
     url(r'^profile/', include('profiles.urls')),
     url(r'^classes/', include('classes.urls')),
     url(r'^post/', include('posts.urls')),
+    url(r'^friends/', include('friendships.urls')),
+    # url(r'^like/', include('likes.urls')),
     url(r'^', include('home_page.urls')),
 
 ]

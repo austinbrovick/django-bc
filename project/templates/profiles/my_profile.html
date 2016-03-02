@@ -8,7 +8,8 @@
 <body>
     {% include "nav_bars/nav_bar.html" %}
     <div id='main_wrapper' class='row'>
-        <div class='col-md-8 col-md-offset-2'>
+        <div class='col-md-8 col-md-offset-1'>
+            {{ like_dictionary }}
             {% if my_profile.profile_picture %}
                 <img src='{{ my_profile.profile_picture.url }}' class="img-responsive img-rounded" width="300"/>
             {% else %}
@@ -18,30 +19,59 @@
             <form method='post' action='{% url "edit_profile_page" %}'>{% csrf_token %}
               <input type='submit' value='Edit Profile'>
             </form>
+            <form method='post' action='{% url "my_friends" %}'>{% csrf_token %}
+                <input type='submit' value='friends'>
+            </form>
             <form method='post' action='{% url "post" %}' enctype='multipart/form-data'>{% csrf_token %}
                 {{post_form.as_p}}
                 <input type='submit' value='POST'>
             </form>
-            {% for post in my_posts %}
-                <h3>{{post}}</h3>
-                {% if post.post_picture %}
-                            <img src='{{ post.post_picture.url }}' class="img-responsive img-rounded" width="300"/>
-                        {% endif %}
-                {% for comment in comments %}
-                    {% if comment.post == post %}
-                        {% if comment.comment_picture %}
-                            <img src='{{ comment.comment_picture.url }}' class="img-responsive img-rounded" width="300"/>
-                        {% endif %}
-                        <h2>{{comment}}</h2>
-                        <h4>{{comment.user.user.first_name}} {{comment.user.user.last_name}}</h4>
+
+
+            {% for x in post_list %}
+                {% if x.post.post_picture %}
+                    <img src='{{ x.post.post_picture.url }}' class="img-responsive img-rounded" width="300"/>
+                {% endif %}
+                <h1>{{x.post}} Likes: {{x.likes}}</h1>
+                {% if x.like_status %}
+                    <a href='{% url "unlike_post" x.post.id %}'>unlike</a>
+                {% else %}
+                    <a href='{% url "like_post" x.post.id %}'>like</a>
+                {% endif %}
+
+
+                {% if x.post.user == current_user %}
+                    <form method='post' action='{% url "delete_post" x.post.id %}'>{% csrf_token %}
+                        <input type='submit' value='delete post'>
+                    </form>
+                {% endif %}
+
+
+                {% for comment in x.comments %}
+                    {% if comment.comment_picture %}
+                        <img src='{{ comment.comment_picture.url }}' class="img-responsive img-rounded" width="300"/>
+                    {% endif %}
+                    <h3>{{comment.user.user.first_name}} {{comment.user.user.last_name}}</h3>
+                    <h2>{{comment.text}} || {{comment.created_at}} </h2>
+                    {% if comment.user == current_user %}
+                        <form method='post' action='{% url "delete_comment" comment.id %}'>{% csrf_token %}
+                            <input type='submit' value='delete comment'>
+                        </form>
                     {% endif %}
                 {% endfor %}
-                <form method ='post' action='{% url "comment" post.id %}' enctype='multipart/form-data'>{% csrf_token %}
+                <form method ='post' action='{% url "comment" x.post.id %}' enctype='multipart/form-data'>{% csrf_token %}
                     {{comment_form.as_p}}
                     <input type='submit' value='comment'>
                 </form>
                 <hr/>
             {% endfor %}
+        </div>
+        <div class='col-sm-2-offset-2'>
+            <ul>
+                {% for user in all_users %}
+                    <li><a href='{% url "their_profile" user.user.username %}'>{{user.user.first_name}} {{user.user.last_name}}</a></li>
+                {% endfor %}
+            </ul>
         </div>
     </div>
     {% include "bootstrap_js.html" %}

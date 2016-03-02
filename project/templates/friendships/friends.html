@@ -1,0 +1,25 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    {% include "bootstrap.html" %}
+</head>
+<body>
+    {% include "nav_bars/nav_bar.html" %}
+    <div class='row'>
+        <div class='col-md-8 col-md-offset-2'>
+            {% for friend in my_friends %}
+                {% if friend.receiver !=  me %}
+                    <h1>{{friend.receiver}}</h1>
+                {% else %}
+                    <h1>{{friend.requester}}</h1>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+    {% include "bootstrap_js.html" %}
+</body>
+
+
+</html>

@@ -66,6 +66,8 @@ INSTALLED_APPS = [
     'rate_professors',
     'classes',
     'posts',
+    'likes',
+    'friendships',
 ]
 
 SITE_ID = 1

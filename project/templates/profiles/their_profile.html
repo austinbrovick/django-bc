@@ -9,16 +9,13 @@
 <body>
     {% include "nav_bars/nav_bar.html" %}
     <div id='main_wrapper' class='row'>
-        <div class='col-md-8 col-md-offset-2'>
-            {% if my_profile.profile.picture.url %}
-                <img src='{{ my_profile.profile_picture.url }}' class="img-responsive img-rounded" width="300"/>
+        <div class='col-md-8 col-md-offset-1'>
+            {% if their_profile.profile_picture %}
+                <img src='{{ their_profile.profile_picture.url }}' class="img-responsive img-rounded" width="300"/>
             {% else %}
                 <img src='{% static "img/audir8.png" %}' class="img-responsive img-rounded" width="300">
             {% endif %}
-            <h1>{{my_profile.user.first_name}} {{ my_profile.user.last_name }}</h1>
-            <form method='post' action='{% url "edit_profile_page" %}'>{% csrf_token %}
-              <input type='submit' value='Edit Profile'>
-            </form>
+            <h1> {{ their_profile.user.first_name }} {{ their_profile.user.last_name }}</h1>
         </div>
     </div>
     {% include "bootstrap_js.html" %}

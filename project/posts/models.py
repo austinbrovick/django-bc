@@ -4,11 +4,8 @@ from profiles.models import UserProfile
 
 
 def upload_location_post(instance, filename):
-    print "******* in upload function *************"
     user = str(instance.user.user.id)
-    print user
     post = str(instance.id)
-    print post
     return "%s/posts/%s" %(user, filename)
 
 def upload_location_comment(instance, filename):
@@ -23,6 +20,7 @@ class Post(models.Model):
     text = models.TextField(max_length=300)
     created_at = models.DateTimeField(auto_now_add=True, auto_now=False)
     post_picture = models.ImageField(upload_to=upload_location_post, null=True, blank=True)
+
     # event = models.ForeignKey(Event)
 
     def __unicode__(self):
@@ -38,3 +36,21 @@ class Comment(models.Model):
 
     def __unicode__(self):
         return self.text
+
+
+
+class PostLike(models.Model):
+    post = models.ForeignKey(Post)
+    liker = models.ForeignKey(UserProfile)
+    timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
+
+    def __unicode__(self):
+        return self.post.text
+
+class CommentLike(models.Model):
+    comment = models.ForeignKey(Comment)
+    liker = models.ForeignKey(UserProfile)
+    timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
+
+    def __unicode__(self):
+        return self.comment.text
