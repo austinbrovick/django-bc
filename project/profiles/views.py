@@ -2,7 +2,8 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.apps import apps
-
+from django.contrib.auth import get_user_model
+User = get_user_model()
 
 from posts.forms import PostForm, CommentForm
 
@@ -10,7 +11,10 @@ Post = apps.get_app_config('posts').models['post']
 Comment = apps.get_app_config('posts').models['comment']
 PostLike = apps.get_app_config('posts').models['postlike']
 CommentLike = apps.get_app_config('posts').models['commentlike']
-Friendship = apps.get_app_config('friendships').models['friendship']
+# Friendship = apps.get_app_config('friendships').models['friendship']
+# FriendRequest = apps.get_app_config('friendships').models['friendrequest']
+
+
 # PostForm = apps.get_app_config('posts').forms['postform']
 
 from posts.forms import PostForm, CommentForm
@@ -22,7 +26,7 @@ def my_profile(request):
     my_profile, created = UserProfile.objects.get_or_create(user=request.user)
     my_posts = Post.objects.filter(user=request.user.userprofile).order_by('-created_at')
     comments = Comment.objects.all()
-    all_users = UserProfile.objects.all().exclude(user=request.user)
+    all_users = User.objects.all().exclude(id=request.user.id)
     post_form = PostForm()
     comment_form = CommentForm()
     post_list = []
@@ -56,7 +60,6 @@ def their_profile(request, username):
         "their_profile" : their_profile,
     }
     return render(request, "profiles/their_profile.html", context)
-    return HttpResponse("their profile")
 
 @login_required
 def edit_profile_page(request):

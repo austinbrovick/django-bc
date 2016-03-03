@@ -15,7 +15,11 @@
             {% else %}
                 <img src='{% static "img/audir8.png" %}' class="img-responsive img-rounded" width="300">
             {% endif %}
+            <form method='post' action='{% url "request_friend" their_profile.user.username %}'>{% csrf_token %}
+                <input type='submit' value='add_friend'>
+            </form>
             <h1> {{ their_profile.user.first_name }} {{ their_profile.user.last_name }}</h1>
+            <h1>{{ their_profile.user.username }}</h1>
         </div>
     </div>
     {% include "bootstrap_js.html" %}

@@ -28,7 +28,6 @@ def upload_location(instance, filename):
     instance.url = "%s/%s" %(location, filename)
     return "%s/%s" %(location, filename)
 
-
 class UserProfile(models.Model):
     user = models.OneToOneField(User)
     user_level = models.IntegerField(default=0)

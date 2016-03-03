@@ -1,49 +1,85 @@
 from __future__ import unicode_literals
-
+from django.contrib.auth.models import User
 from django.db import models
-from profiles.models import UserProfile
+import datetime
 
+class FriendRequest(models.Model):
+    from_user = models.ForeignKey(User, related_name='friend_request_from')
+    to_user = models.ForeignKey(User, related_name='friend_request_to')
+    created_at = models.DateTimeField(default=datetime.datetime.now) # set when the object is created
+    accepted = models.BooleanField(default=False) # is the request accepted or is it still pending?
 
+    class Meta:
+        unique_together = (('to_user', 'from_user'),)
 
+    def __unicode__(self):
+        return "%s sending a request to %s" %(self.from_user, self.to_user)
 
-# class FriendshipManager(models.Manager):
-#     def my_friends(self, user):
-#         friends1 = UserProfile.objects.filter(requester=user).filter(friends=True)
-#         friends2 = UserProfile.objects.filter(receiver=user).filter(friends=True)
-#         friends = []
-#         for friend in friends1:
-#             friends.append(friend)
-#         for friend in friends2:
-#             friends.append(friend)
-#         return friends
+    def accept(self):
+        Friendship.objects.befriend(self.from_user, self.to_user)
+        self.accepted = True
 
+    def decline(self):
+        self.delete()
+
+    def cancel(self):
+        self.delete()
+
+class FriendshipManager(models.Manager):
+    def friends_of(self, user): # shuffle = False ??
+        queryset = UserProfile.objects.filter(friendship__friends__user=user)
+        return queryset
+
+    def hello(self):
+        print "hello from model manager"
+
+    def are_friends(self, user1, user2):
+        print "are friends"
+        friendship = Friendship.objects.get(user=user1)
+        return bool(friendship.friends.filter(user=user2).exists())
+
+    def befriend(self, user1, user2):
+        print "in befriend function in friendship manager"
+        friendship = Friendship.objects.get(user=user1)
+        friendship.friends.add(Friendship.objects.get(user=user2))
+
+        FriendshipRequest.objects.filter(from_user=user1, to_user=user2).delete()
+
+    def unfriend(self, user1, user2):
+        friendship = Friendship.objects.get(user=user1)
+        friendship.friends.remove(Friendship.objects.get(user=user2))
+
+        FriendRequest.objects.filter(from_user=user1, to_user=user2).delete()
+        FriendRequest.objects.filter(from_user=user2, to_user=user1).delete()
 
 
 class Friendship(models.Model):
-    requester = models.ForeignKey(UserProfile, related_name='requester')
-    receiver = models.ForeignKey(UserProfile, related_name='receiver')
-    sent_status = models.BooleanField(default=False)
-    accepted_status = models.BooleanField(default=False)
-    friends = models.BooleanField(default=False)
-    time_sent = models.DateTimeField(auto_now_add=True, auto_now=False)
-    time_accepted = models.DateTimeField(auto_now_add=True, auto_now=False)
-    friend = models.ForeignKey(UserProfile, related_name='friend')
+    user = models.OneToOneField(User, related_name='friendship')
+    friends = models.ManyToManyField('self', symmetrical=True) # if i am your friend, you are my friend
+    objects = FriendshipManager()
 
+    class Meta:
+        verbose_name = 'friendship'
+        verbose_name_plural = 'friendships'
 
     def __unicode__(self):
-        return self.requester.user.first_name
+        return self.user.username
 
-    # def my_friends(self, user):
-    #     friends1 = UserProfile.objects.filter(requester=user.userprofile).filter(friends=True)
-    #     friends2 = UserProfile.objects.filter(receiver=user.userprofile).filter(friends=True)
-    #     friends = []
-    #     for friend in friends1:
-    #         friends.append(friend)
-    #     for friend in friends2:
-    #         friends.append(friend)
-    #     return friends
+    def friend_count(self):
+        return self.friends.count()
 
 
 
 
-# request.user.userprofile.requester
+
+
+
+
+
+
+
+
+
+
+
+
