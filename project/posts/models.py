@@ -14,14 +14,33 @@ def upload_location_comment(instance, filename):
     post = str(instance.post.id)
     return "%s/%s/%s/%s" %(post_user, post, comment_user, filename)
 
+class PostManager(models.Manager):
+    def my_profile_posts(self, me):
+        my_profile_posts = Post.objects.filter(profile=me)
+        return my_profile_posts
+
+
+    def their_profile_posts(self, me, them):
+        their_profile_posts = Post.objects.filter(profile=them)
+        posts = []
+        count = -1
+        for post in their_profile_posts:
+            count = count + 1
+            posts.append({'post':post, 'likes':Post.objects.filter(postlike__post=post).count(), 'likers' :UserProfile.objects.filter(postlike__post=post), 'comments': Comment.objects.filter(post=post), 'like_status' : False})
+            for liker in posts[count]["likers"]:
+                if liker == me:
+                    posts[count]['like_status'] = True
+        return posts
+
+
 
 class Post(models.Model):
-    user = models.ForeignKey(UserProfile)
+    user = models.ForeignKey(UserProfile, related_name='poster')
     text = models.TextField(max_length=300)
     created_at = models.DateTimeField(auto_now_add=True, auto_now=False)
     post_picture = models.ImageField(upload_to=upload_location_post, null=True, blank=True)
-
-    # event = models.ForeignKey(Event)
+    profile = models.ForeignKey(UserProfile, related_name='profile', default=None, blank=True, null=True)
+    objects = PostManager()
 
     def __unicode__(self):
         return self.text

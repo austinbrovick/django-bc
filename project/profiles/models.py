@@ -19,7 +19,10 @@ MAJORS = (
     ('Accounting', 'Accounting'),
     ('Marketing', 'Marketing'),
     ('Human Resources', 'Human Resources'),
-    ('Economics', 'Economics')
+    ('Economics', 'Economics'),
+    ('Computer Science', 'Computer Science'),
+    ('English', 'English'),
+    ('History', 'History'),
     )
 
 def upload_location(instance, filename):

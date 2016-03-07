@@ -27,6 +27,7 @@ urlpatterns = [
     url(r'^classes/', include('classes.urls')),
     url(r'^post/', include('posts.urls')),
     url(r'^friends/', include('friends.urls')),
+    # url(r'^notifications/', include('notifications.urls'))
     # url(r'^like/', include('likes.urls')),
     url(r'^', include('home_page.urls')),
 

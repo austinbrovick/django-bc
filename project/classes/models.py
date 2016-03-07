@@ -26,9 +26,20 @@ CLASSES = (
     ('Math 342', 'Math 342')
     )
 
+QUARTERS = (
+    ('Summer 2014', 'Summer 2014'),
+    ('Fall 2014', 'Fall 2014'),
+    ('Winter 2015', 'Winter 2015'),
+    ('Spring 2015', 'Spring 2015'),
+    ('Summer 2015', 'Summer 2015'),
+    ('Fall 2015', 'Fall 2015'),
+    ('Winter 2016', 'Winter 2016'),
+)
+
 
 class Course(models.Model):
     user = models.ForeignKey(UserProfile)
     course = models.CharField(max_length=50, choices=CLASSES)
+    quarter = models.CharField(max_length=50)
 
 

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    {% include "bootstrap.html" %}
+</head>
+<body>
+    {% include "nav_bars/nav_bar.html" %}
+    <div class='col-md-8 col-md-offset-1'>
+      <h1>Notifications</h1>
+      <h3>Friend requests</h3>
+      {% for friend_request in friend_requests %}
+        <h1>{{ friend_request.from_user }}</h1>
+        <form method='post' action='{% url "accept_request" friend_request.from_user.user.username %}'>{% csrf_token %}
+          <input type='submit' value='accept friend request'>
+        </form>
+      {% endfor %}
+    </div>
+</body>
+</html>

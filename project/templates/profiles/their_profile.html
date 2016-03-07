@@ -15,11 +15,65 @@
             {% else %}
                 <img src='{% static "img/audir8.png" %}' class="img-responsive img-rounded" width="300">
             {% endif %}
-            <form method='post' action='{% url "request_friend" their_profile.user.username %}'>{% csrf_token %}
-                <input type='submit' value='add_friend'>
-            </form>
+            {% if friend_status == 0 %}
+                <form method='post' action='{% url "request_friend" their_profile.user.username %}'>{% csrf_token %}
+                    <input type='submit' value='add_friend'>
+                </form>
+            {% elif friend_status == 1 %}
+                <h1>Cancel Friend Request</h1>
+            {% else %}
+                <h1>They sent request</h1>
+            {% endif %}
             <h1> {{ their_profile.user.first_name }} {{ their_profile.user.last_name }}</h1>
             <h1>{{ their_profile.user.username }}</h1>
+            <form method='post' action='{% url "post_on_their_profile" their_profile.user.username %}' enctype='multipart/form-data'>{% csrf_token %}
+                {{ post_form }}
+                <input type='submit' value='post'>
+            </form>
+
+            {% for x in their_posts %}
+                {% if x.post.post_picture %}
+                    <img src='{{ x.post.post_picture.url }}' class="img-responsive img-rounded" width="300"/>
+                {% endif %}
+                <h1>{{x.post}} Likes: {{x.likes}}</h1>
+                {% if x.like_status %}
+                    <a href='{% url "unlike_post" x.post.id %}'>unlike</a>
+                {% else %}
+                    <a href='{% url "like_post" x.post.id %}'>like</a>
+                {% endif %}
+
+                {% if x.post.user == current_user %}
+                    <form method='post' action='{% url "delete_post_on_their_profile" x.post.id x.post.profile.user.username %}'>{% csrf_token %}
+                        <input type='submit' value='delete post'>
+                    </form>
+                {% endif %}
+
+
+                {% for comment in x.comments %}
+                    {% if comment.comment_picture %}
+                        <img src='{{ comment.comment_picture.url }}' class="img-responsive img-rounded" width="300"/>
+                    {% endif %}
+                    <h3>{{comment.user.user.first_name}} {{comment.user.user.last_name}}</h3>
+                    <h2>{{comment.text}} || {{comment.created_at}} </h2>
+                    {% if comment.user == current_user %}
+                        <form method='post' action='{% url "delete_comment" comment.id %}'>{% csrf_token %}
+                            <input type='submit' value='delete comment'>
+                        </form>
+                    {% endif %}
+                {% endfor %}
+                <form method ='post' action='{% url "comment" x.post.id %}' enctype='multipart/form-data'>{% csrf_token %}
+                    {{comment_form.as_p}}
+                    <input type='submit' value='comment'>
+                </form>
+                <hr/>
+            {% endfor %}
+
+
+
+
+
+
+
         </div>
     </div>
     {% include "bootstrap_js.html" %}

@@ -22,7 +22,7 @@
     </div>
     <div class='row'>
         <div class='col-md-8 col-md-offset-2'>
-            <h1>sup bitches</h1>
+            <h1>Spring 2016</h1>
             <form method='post' action='{% url "add_classes" quarter %}'>{% csrf_token %}
                 <br />
                 {{ formset.management_form }}
@@ -32,6 +32,7 @@
                         <br/>
                     {% endfor %}
                 </ul>
+                <!-- <input type='hidden' value='spring2016'> -->
                 <input type='submit' value='add classes'>
             </form>
         </div>

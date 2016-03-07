@@ -11,8 +11,8 @@ Post = apps.get_app_config('posts').models['post']
 Comment = apps.get_app_config('posts').models['comment']
 PostLike = apps.get_app_config('posts').models['postlike']
 CommentLike = apps.get_app_config('posts').models['commentlike']
-# Friendship = apps.get_app_config('friendships').models['friendship']
-# FriendRequest = apps.get_app_config('friendships').models['friendrequest']
+Friend = apps.get_app_config('friends').models['friend']
+FriendRequest = apps.get_app_config('friends').models['friendrequest']
 
 
 # PostForm = apps.get_app_config('posts').forms['postform']
@@ -29,6 +29,8 @@ def my_profile(request):
     all_users = User.objects.all().exclude(id=request.user.id)
     post_form = PostForm()
     comment_form = CommentForm()
+    my_friends = Friend.objects.my_friends(request.user.userprofile)
+    print my_friends
     post_list = []
     count = -1
     for post in my_posts:
@@ -37,7 +39,7 @@ def my_profile(request):
         for liker in post_list[count]["likers"]:
             if liker == request.user.userprofile:
                 post_list[count]['like_status'] = True
-                break
+                # break
 
     print post_list
 
@@ -49,6 +51,7 @@ def my_profile(request):
         "post_list" : post_list,
         "current_user" : request.user.userprofile,
         "all_users" : all_users,
+        "my_friends" : my_friends,
     }
     print post_list
     return render(request, "profiles/my_profile.html", context)
@@ -56,10 +59,32 @@ def my_profile(request):
 @login_required
 def their_profile(request, username):
     their_profile = UserProfile.objects.get(user__username=username)
+    my_profile = UserProfile.objects.get(user=request.user)
+    friend_status = FriendRequest.objects.friend_request_status(my_profile, their_profile)
+
+
+    their_posts = Post.objects.their_profile_posts(my_profile, their_profile)
+    print their_posts
+
+    post_form = PostForm()
+    comment_form = CommentForm()
+
+    print friend_status
     context = {
         "their_profile" : their_profile,
+        "friend_status" : friend_status,
+        "post_form" : post_form,
+        "comment_form" : comment_form,
+        "their_posts" : their_posts,
+        "current_user" : request.user.userprofile,
     }
     return render(request, "profiles/their_profile.html", context)
+
+
+    # Friend Status
+        # 0) If no friend request has been sent
+        # 1) If I sent the friend request and it's pending
+        # 2) If they sent me a friend request and it's pending
 
 @login_required
 def edit_profile_page(request):
